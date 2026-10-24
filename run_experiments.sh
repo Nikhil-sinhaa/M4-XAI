@@ -38,14 +38,14 @@ LOG_DIR="$RESULTS_ROOT/logs"
 METHODS="constant random_16 random gradcam ig sg"   # all six from Table 1
 
 # ── Perturbation (MoRF / LeRF / ABPC) ────────────────────────────────────────
-N_STEPS=20          # paper: 20 percentile steps (each covers 5% of pixels)
+N_STEPS=100         # M4 run_eval.sh: limit_number_generated_samples=100
 
 # ── Integrated Gradients ──────────────────────────────────────────────────────
 IG_STEPS=50         # number of Riemann-sum steps along the baseline path
 
 # ── SmoothGrad ────────────────────────────────────────────────────────────────
-SG_SAMPLES=50       # number of noisy forward passes
-SG_STDEV=0.15       # noise stdev = 0.15 × (input_max − input_min)
+SG_SAMPLES=100      # M4 run_expl.sh: n_samples=100
+SG_STDEV=0.1        # M4 run_expl.sh: noise_amount=0.1 × (input_max − input_min)
 
 # ── Smoke test (sanity check before the full run) ─────────────────────────────
 SMOKE_IMAGES=100    # 20 classes × 5 images
@@ -66,9 +66,9 @@ banner "M4 XAI Benchmark — Table 1 Replication"
 info "Run ID      : $RUN_ID"
 info "Data        : $DATA_DIR"
 info "Methods     : $METHODS"
-info "n_steps     : $N_STEPS   (paper: 20)"
-info "ig_steps    : $IG_STEPS  (paper: ~50)"
-info "sg_samples  : $SG_SAMPLES (paper: ~50)"
+info "n_steps     : $N_STEPS   (M4: 100)"
+info "ig_steps    : $IG_STEPS  (M4: 50)"
+info "sg_samples  : $SG_SAMPLES (M4: 100)"
 info "sg_stdev    : $SG_STDEV"
 info "seed        : $SEED"
 info "Results dir : $RESULTS_ROOT"

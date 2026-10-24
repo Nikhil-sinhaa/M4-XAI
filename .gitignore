@@ -20,7 +20,7 @@ ENV/
 .python-version
 
 # ── uv / pip ──────────────────────────────────────────────────────────────────
-uv.lock
+# uv.lock is kept (not ignored): it pins exact versions so other machines reproduce the same environment
 pip-wheel-metadata/
 
 # ── Data & datasets ───────────────────────────────────────────────────────────
@@ -90,3 +90,20 @@ tmp/
 scratch/
 *.tmp
 *.bak
+
+# ── Added: weights, archives, downloads, run leftovers ───────────────────────
+*.pdparams
+*.part
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+nohup.out
+*.out
+download.log
+ssh_askpass*
+
+# Raw per-run outputs (per-image CSVs, curves, maps). Keep only the small summary tables/figures.
+results/m4/vision/
+results/m4/text/
+results/m4_sanity/

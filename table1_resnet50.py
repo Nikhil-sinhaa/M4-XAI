@@ -77,7 +77,7 @@ except ImportError:
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 IMAGENET_STD  = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 MX_UINT8      = 127.0    # grey masking baseline in [0,255] space
-N_STEPS       = 20
+N_STEPS       = 100      # benchmark-cv/run_eval.sh: limit_number_generated_samples=100
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -265,7 +265,8 @@ def attr_ig(img_hwc, inp_norm, pred_cls, model, device,
     hw = img_hwc.shape[:2]
     attrs = []
     for _ in range(ig_trials):
-        baseline = torch.randn_like(inp_norm) * 0.001  # small random noise baseline
+        # InterpretDL baselines='random': np.random.normal(size=data.shape), i.e. N(0, 1) in normalised space
+        baseline = torch.randn_like(inp_norm)
         attr = ig_attr.attribute(inp_norm, baselines=baseline,
                                   target=pred_cls, n_steps=ig_steps,
                                   internal_batch_size=1)
@@ -287,7 +288,7 @@ def attr_sg(img_hwc, inp_norm, pred_cls, model, device,
     nt    = NoiseTunnel(sal)
     attr  = nt.attribute(inp_norm, nt_samples=sg_samples,
                           nt_samples_batch_size=2,
-                          stdevs=stdev, nt_type="smoothgrad_sq",
+                          stdevs=stdev, nt_type="smoothgrad",   # InterpretDL averages plain gradients
                           target=pred_cls)
     return _agg_to_2d(attr, img_hwc.shape[:2])
 
@@ -523,7 +524,7 @@ def parse_args():
                    default=["constant", "random", "gradcam", "ig", "sg"],
                    choices=list(ATTRIBUTORS.keys()))
     p.add_argument("--n_steps",     type=int, default=N_STEPS,
-                   help="Perturbation steps (paper: 20)")
+                   help="Perturbation steps (M4 run_eval.sh: 100)")
     p.add_argument("--resize_to",   type=int, default=224)
     p.add_argument("--crop_to",     type=int, default=224)
     p.add_argument("--ig_steps",    type=int, default=50,
