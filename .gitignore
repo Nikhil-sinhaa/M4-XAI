@@ -103,7 +103,12 @@ nohup.out
 download.log
 ssh_askpass*
 
-# Raw per-run outputs (per-image CSVs, curves, maps). Keep only the small summary tables/figures.
-results/m4/vision/
-results/m4/text/
-results/m4_sanity/
+# All experiment results
+results/
+
+# ── Credentials (never commit) ───────────────────────────────────────────────
+.kaggle/
+kaggle.json
+access_token
+.env
+.env.*
