@@ -95,20 +95,69 @@ committed: re-run them if you need them (`results/table1_faithful/` is created b
 
 ---
 
-## Phase 2: Research Gap & Extension 🔨
+## Phase 2: Research Gap & Extension
 
-### Research Gap: Masking Baseline Sensitivity
+### Research gap: is M4's method ranking robust to the masking baseline?
 
-> The M4 paper uses a fixed grey-pixel `(127,127,127)` baseline for vision and `[PAD]` token for NLP. **No analysis was done on how sensitive faithfulness scores (MoRF, ABPC) are to this baseline choice.**
+M4 evaluates attribution methods with perturbation metrics (MoRF / LeRF / ABPC) that mask features with a fixed value
+(grey `(127,127,127)` for images in the authors' pipeline). The paper (Eq. 1-3, p. 4) does not state the masking value or test
+other values. **Gap:** nobody has checked whether M4's method rankings survive a change of masking baseline. Full write-up with
+references: [`research_gap.md`](research_gap.md).
 
-See [`research_gap.md`](research_gap.md) for the full 1-page explanation.
+### Proposed improvement (new files)
 
-### Extension Experiments
+| File | What it does |
+|---|---|
+| `rescore_baselines.py` | Re-scores the **saved M4 attribution maps** (`results/m4/vision/<model>/<method>/maps_sq.npy`) under 5 masking baselines (grey, black, mean colour, blur, noise). Only forward passes; attributions are not recomputed. |
+| `analyze_baselines.py` | Bootstrap CIs, Kendall tau and flipped pairs vs the grey (M4) ranking, multi-baseline ABPC, Baseline Sensitivity Score (BSS), bootstrap ranking reproducibility, MobileNet sample-size analysis, figures. |
+| `phase2_report/build_report.py` | Builds the results-and-comparison PDF from the CSVs (`phase2_report/report.pdf`). |
 
-| Experiment | Script | Output | Status |
+The original pipeline (`m4bench/`) is reused as is for image/model loading and metric helpers.
+
+### What was run (real experiments, seed 42)
+
+| Model | Methods | Images | Baselines |
 |---|---|---|---|
-| Vision baseline sensitivity (ResNet-50) | `phase2_vision_baseline.py` | `results/phase2/vision_*.png/csv` | 🔨 |
-| NLP baseline sensitivity (BERT-base) | `phase2_nlp_baseline.py` | `results/phase2/nlp_*.png/csv` | 🔨 |
+| ResNet-50 | GradCAM, IG, SG | first 500 of `benchmark_data/imagenet_val_5k.txt` | 5 |
+| ViT-S | IG, SG, GA, BT-head, BT-token | first 100 | 5 |
+| MobileNet (sample-size analysis only) | GradCAM, IG, SG | 5000 (M4's own grey-baseline scores) | 1 |
+
+**Not done:** text models ([PAD]/[MASK]/[UNK]), other CNNs/ViTs, PScore/SynScore under other baselines. Conclusions are limited to ResNet-50 and ViT-S.
+
+### Where the results are
+
+`phase2_results/` is the committed copy of the real results (the `results/` folder is git-ignored):
+
+- `phase2_results/rescore/summary/`: `baseline_scores.csv`, `rank_stability.csv`, `multibaseline.csv`, `sample_size.csv`, and the figures.
+- `phase2_results/rescore/<model>/*.npy`: raw MoRF/LeRF probability curves, shape `(baselines, images, 2, 101)`.
+- `phase2_results/vision/mobilenet/`: M4 per-image scores used by the sample-size analysis.
+- `phase2_results/logs/`: run logs. `phase2_report/report.pdf`: the comparison report.
+
+> `resultsynthetic/` and `*synthetic*` scripts, if present, contain **simulated** numbers and are **not** results of this project.
+
+### Reproduce
+
+```bash
+# 1. (needs GPU, the M4 maps in results/m4/vision, and data/M4_5000)  ~20 min per ResNet-50 method at 500 images
+.venv/bin/python rescore_baselines.py --models resnet50 --limit 500
+.venv/bin/python rescore_baselines.py --models vit_small --limit 100
+# 2. analysis (CPU, seconds). Reproduces the committed tables/figures from the committed curves, no GPU needed:
+.venv/bin/python analyze_baselines.py --rescore_root phase2_results/rescore --vision_root phase2_results/vision
+# 3. report
+.venv/bin/python phase2_report/build_report.py
+libreoffice --headless --convert-to pdf:writer_web_pdf_Export --outdir phase2_report phase2_report/report.html
+```
+
+### Headline findings (see the report for tables, CIs and caveats)
+
+- ResNet-50: M4's grey ranking (IG > GradCAM > SG) changes under black, noise and blur (blur reverses it).
+- IG and SG are the baseline-sensitive methods on both models (BSS about 0.04-0.07 vs about 0.01-0.02 for GradCAM / attention-based methods).
+- ViT-S at 100 images cannot separate GA, BT-head and BT-token.
+- A random 500-image subset reproduces the 5000-image MobileNet ranking in only 85% of draws.
+
+### Earlier Phase 2 scripts (superseded)
+
+`phase2_vision_baseline.py` / `phase2_nlp_baseline.py` were first-pass, small-sample versions that recompute IG. Their outputs are not part of the final results.
 
 ---
 
