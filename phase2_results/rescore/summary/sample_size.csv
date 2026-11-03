@@ -1,0 +1,6 @@
+model,N,mean_tau,p_same_ranking,full_N,full_ranking
+mobilenet,100,0.720,0.664,5000,gradcam>ig>sg
+mobilenet,250,0.820,0.738,5000,gradcam>ig>sg
+mobilenet,500,0.900,0.850,5000,gradcam>ig>sg
+mobilenet,1000,0.941,0.912,5000,gradcam>ig>sg
+mobilenet,2500,0.999,0.998,5000,gradcam>ig>sg

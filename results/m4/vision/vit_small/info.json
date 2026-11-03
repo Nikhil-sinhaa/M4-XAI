@@ -1,0 +1,37 @@
+{
+  "model": "vit_small",
+  "methods": {
+    "ig": {
+      "explainer": "ig",
+      "start_layer": 2
+    },
+    "sg": {
+      "explainer": "sg",
+      "start_layer": 2
+    },
+    "ga": {
+      "explainer": "ga",
+      "start_layer": 2
+    },
+    "bt_head": {
+      "explainer": "bt_head",
+      "start_layer": 2
+    },
+    "bt_token": {
+      "explainer": "bt_token",
+      "start_layer": 2
+    }
+  },
+  "n_images": 5000,
+  "settings": {
+    "n_steps": 100,
+    "ig_steps": 50,
+    "ig_trials": 10,
+    "sg_samples": 100,
+    "sg_noise": 0.1,
+    "bt_steps": 20,
+    "amp": false,
+    "seed": 42
+  },
+  "top1_on_newly_evaluated": 0.816
+}

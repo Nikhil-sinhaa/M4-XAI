@@ -1,0 +1,31 @@
+{
+  "model": "distilbert",
+  "variants": [
+    "ig",
+    "sg",
+    "lime",
+    "ga-0",
+    "ga-1",
+    "ga-2",
+    "ga-3",
+    "ga-4",
+    "ga-5",
+    "bt_head-0",
+    "bt_head-1",
+    "bt_head-2",
+    "bt_head-3",
+    "bt_head-4",
+    "bt_head-5",
+    "bt_token-0",
+    "bt_token-1",
+    "bt_token-2",
+    "bt_token-3",
+    "bt_token-4",
+    "bt_token-5"
+  ],
+  "n_docs": 200,
+  "n_layers": 6,
+  "max_len": 512,
+  "split": "val",
+  "accuracy_on_newly_evaluated": 0.88
+}

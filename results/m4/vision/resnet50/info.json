@@ -1,0 +1,41 @@
+{
+  "model": "resnet50",
+  "methods": {
+    "constant": {
+      "explainer": "constant",
+      "start_layer": null
+    },
+    "random_16": {
+      "explainer": "random_16",
+      "start_layer": null
+    },
+    "random": {
+      "explainer": "random",
+      "start_layer": null
+    },
+    "gradcam": {
+      "explainer": "gradcam",
+      "start_layer": null
+    },
+    "ig": {
+      "explainer": "ig",
+      "start_layer": null
+    },
+    "sg": {
+      "explainer": "sg",
+      "start_layer": null
+    }
+  },
+  "n_images": 5000,
+  "settings": {
+    "n_steps": 100,
+    "ig_steps": 50,
+    "ig_trials": 10,
+    "sg_samples": 100,
+    "sg_noise": 0.1,
+    "bt_steps": 20,
+    "amp": false,
+    "seed": 42
+  },
+  "top1_on_newly_evaluated": 0.788
+}
