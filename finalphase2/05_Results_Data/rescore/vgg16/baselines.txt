@@ -1,5 +1,0 @@
-grey
-black
-mean
-blur
-noise

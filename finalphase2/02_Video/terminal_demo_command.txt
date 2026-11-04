@@ -1,4 +1,0 @@
-# Run during section 4 (Implementation), from the finalphase2 folder. Needs no GPU, takes a few seconds.
-cd 04_Code
-python analyze_baselines.py --rescore_root ../05_Results_Data/rescore --vision_root ../05_Results_Data/vision
-# (inside the project venv: .venv/bin/python ... ; it prints the per-model table and rewrites 05_Results_Data/rescore/summary/)
